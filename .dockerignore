@@ -1,0 +1,28 @@
+# Dependencies (reinstalled inside the image)
+node_modules/
+telegram-bot/node_modules/
+mini-app/node_modules/
+
+# Build output (rebuilt inside the image)
+dist/
+telegram-bot/dist/
+mini-app/dist/
+
+# Local-only files
+.env
+telegram-bot/.env
+logs/
+telegram-bot/logs/
+uploads/
+telegram-bot/uploads/
+*.log
+
+# Version control / editor
+.git/
+.gitignore
+.DS_Store
+.vscode/
+.idea/
+
+# Docs (not needed inside the image)
+README.md

@@ -1,0 +1,52 @@
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-telegram-bot
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - MONGODB_URI=${MONGODB_URI}
+      - ADMIN_TELEGRAM_ID=${ADMIN_TELEGRAM_ID}
+      # Same-origin deployment: Mini App is served by this same service at /app
+      - MINI_APP_URL=${MINI_APP_URL:-http://localhost:5000/app}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      - SESSION_SECRET=${SESSION_SECRET:-changeme}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - NODE_ENV=${NODE_ENV:-production}
+    volumes:
+      - ./logs:/app/telegram-bot/logs
+      - ./uploads:/app/telegram-bot/uploads
+    networks:
+      - bot-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Optional: Local MongoDB (remove if using Atlas)
+  # mongodb:
+  #   image: mongo:7
+  #   container_name: bot-mongodb
+  #   restart: unless-stopped
+  #   volumes:
+  #     - mongodb_data:/data/db
+  #   networks:
+  #     - bot-network
+
+networks:
+  bot-network:
+    driver: bridge
+
+# volumes:
+#   mongodb_data:

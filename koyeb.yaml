@@ -1,0 +1,48 @@
+name: ai-telegram-bot
+
+services:
+  - name: bot
+    type: web
+    git:
+      branch: main
+      # Do NOT set a work directory for this service — it must stay at the
+      # repo root so the Dockerfile build can see both telegram-bot/ and
+      # mini-app/. Setting a work directory excludes everything outside it
+      # from the build context.
+    build:
+      type: dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - port: 5000
+        protocol: http
+    env:
+      - key: TELEGRAM_BOT_TOKEN
+        value: ""
+      - key: MONGODB_URI
+        value: ""
+      - key: ADMIN_TELEGRAM_ID
+        value: ""
+      # After your first deploy, set this to your Koyeb service URL + /app,
+      # e.g. https://ai-telegram-bot-yourorg.koyeb.app/app — the Mini App is
+      # served from this same service, so no separate hosting is needed.
+      - key: MINI_APP_URL
+        value: ""
+      - key: OPENAI_API_KEY
+        value: ""
+      - key: ANTHROPIC_API_KEY
+        value: ""
+      - key: GEMINI_API_KEY
+        value: ""
+      - key: GROQ_API_KEY
+        value: ""
+      - key: ADMIN_PASSWORD
+        value: ""
+      - key: SESSION_SECRET
+        value: ""
+      - key: NODE_ENV
+        value: "production"
+    health_checks:
+      - path: /health
+        port: 5000
+        initial_delay_seconds: 30
+        period_seconds: 30
